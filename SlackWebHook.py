@@ -85,3 +85,22 @@ class WebHook(object):
         payloadJSON = json.dumps(payload)
         headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
         requests.post(self.hooks[channel], data=payloadJSON, headers=headers)
+
+    def post_complex_link(self, username, title, permalink, pretext, text, fields, color, channel):
+        payload = {
+            "attachments": [
+                {
+                    "author_name": username,
+                    "author_link": "https://www.reddit.com/user/" + username,
+                    "title": title,
+                    "title_link": 'https://www.reddit.com' + permalink,
+                    "pretext": pretext,
+                    "text": text,
+                    "fields": fields,
+                    "color": color
+                }
+            ]
+        }
+        payloadJSON = json.dumps(payload)
+        headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
+        requests.post(self.hooks[channel], data=payloadJSON, headers=headers)
