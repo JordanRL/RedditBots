@@ -8,7 +8,8 @@ class WebHook(object):
         super(WebHook, self).__init__()
         self.hooks = {
             "bot-notifications": "https://hooks.slack.com/services/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",
-            "danger-room": "https://hooks.slack.com/services/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"
+            "danger-room": "https://hooks.slack.com/services/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",
+            "random": "https://hooks.slack.com/services/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"
         }
 
     def post_status(self, pretext, text, channel):
@@ -17,7 +18,8 @@ class WebHook(object):
                 {
                     "pretext": pretext,
                     "text": text,
-                    "color": "good"
+                    "color": "good",
+                    "mrkdwn_in": ["pretext", "text", "fields"]
                 }
             ]
         }
@@ -31,7 +33,8 @@ class WebHook(object):
                 {
                     "pretext": pretext,
                     "text": text,
-                    "color": "warning"
+                    "color": "warning",
+                    "mrkdwn_in": ["pretext", "text", "fields"]
                 }
             ]
         }
@@ -45,7 +48,8 @@ class WebHook(object):
                 {
                     "pretext": pretext,
                     "text": text,
-                    "color": "danger"
+                    "color": "danger",
+                    "mrkdwn_in": ["pretext", "text", "fields"]
                 }
             ]
         }
@@ -61,7 +65,8 @@ class WebHook(object):
                     "author_link": "https://www.reddit.com/user/" + username,
                     "pretext": pretext,
                     "text": text,
-                    "color": color
+                    "color": color,
+                    "mrkdwn_in": ["pretext", "text", "fields"]
                 }
             ]
         }
@@ -78,7 +83,8 @@ class WebHook(object):
                     "title": title,
                     "title_link": 'https://www.reddit.com' + permalink,
                     "pretext": pretext,
-                    "color": color
+                    "color": color,
+                    "mrkdwn_in": ["pretext", "text", "fields"]
                 }
             ]
         }
@@ -97,7 +103,8 @@ class WebHook(object):
                     "pretext": pretext,
                     "text": text,
                     "fields": fields,
-                    "color": color
+                    "color": color,
+                    "mrkdwn_in": ["pretext", "text", "fields"]
                 }
             ]
         }
