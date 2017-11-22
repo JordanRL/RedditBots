@@ -1,0 +1,44 @@
+reddit_api:
+    client_id: j0Np8cQRz6VR3w
+    client_secret: HxqvYiLX4ZqfylDQ8ENI2t-rEtI
+    username: ActualBernieBot
+    password: cdL7ED8L
+    user_agent: SlackRedditBot:python:v1.0
+
+subreddit:
+    name: SandersForPresident
+    meta_flair_id: 03bb0c60-6103-11e7-9f5a-0ec41b29461a
+    mod_list:
+        - JordanLeDoux
+        - GalacticSoap
+        - Chartis
+        - neurocentrix
+        - 2ply
+        - 9AD-
+        - aranurea
+        - GravityCat1
+        - ActualBernieBot
+        - writingtoss
+        - scriggities
+        - IrrationalTsunami
+    report_threshold:
+        danger: 1
+        notice: 0
+    problem_subs:
+        - The_Donald
+        - Enough_Sanders_Spam
+        - WayOfTheBern
+
+slack:
+    channel_list:
+        bot-notifications: https://hooks.slack.com/services/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
+        danger-room: https://hooks.slack.com/services/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
+        random: https://hooks.slack.com/services/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
+    status_channel: bot-notifications
+    notice_channel: bot-notifications
+    alert_channel: bot-notifications
+    danger_channel: danger-room
+    social_channel: random
+
+bot:
+    name: ActualBernieBot

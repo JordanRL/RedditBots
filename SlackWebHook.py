@@ -4,13 +4,14 @@ import json
 
 
 class WebHook(object):
-    def __init__(self):
-        super(WebHook, self).__init__()
-        self.hooks = {
-            "bot-notifications": "https://hooks.slack.com/services/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",
-            "danger-room": "https://hooks.slack.com/services/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",
-            "random": "https://hooks.slack.com/services/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"
-        }
+    def __init__(self, settings):
+        """
+
+        :param settings:
+        :type settings: settings
+        """
+        self.hooks = settings.SLACK_CHANNEL_LIST
+        self.bot_name = settings.BOT_NAME
 
     def post_status(self, pretext, text, channel):
         payload = {
@@ -19,13 +20,14 @@ class WebHook(object):
                     "pretext": pretext,
                     "text": text,
                     "color": "good",
-                    "mrkdwn_in": ["pretext", "text", "fields"]
+                    "mrkdwn_in": ["pretext", "text", "fields"],
+                    "footer": "Provided By "+self.bot_name
                 }
             ]
         }
-        payloadJSON = json.dumps(payload)
+        payload_json = json.dumps(payload)
         headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
-        requests.post(self.hooks[channel], data=payloadJSON, headers=headers)
+        requests.post(self.hooks[channel], data=payload_json, headers=headers)
 
     def post_warning(self, pretext, text, channel):
         payload = {
@@ -34,13 +36,14 @@ class WebHook(object):
                     "pretext": pretext,
                     "text": text,
                     "color": "warning",
-                    "mrkdwn_in": ["pretext", "text", "fields"]
+                    "mrkdwn_in": ["pretext", "text", "fields"],
+                    "footer": "Provided By "+self.bot_name
                 }
             ]
         }
-        payloadJSON = json.dumps(payload)
+        payload_json = json.dumps(payload)
         headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
-        requests.post(self.hooks[channel], data=payloadJSON, headers=headers)
+        requests.post(self.hooks[channel], data=payload_json, headers=headers)
 
     def post_danger(self, pretext, text, channel):
         payload = {
@@ -49,13 +52,14 @@ class WebHook(object):
                     "pretext": pretext,
                     "text": text,
                     "color": "danger",
-                    "mrkdwn_in": ["pretext", "text", "fields"]
+                    "mrkdwn_in": ["pretext", "text", "fields"],
+                    "footer": "Provided By "+self.bot_name
                 }
             ]
         }
-        payloadJSON = json.dumps(payload)
+        payload_json = json.dumps(payload)
         headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
-        requests.post(self.hooks[channel], data=payloadJSON, headers=headers)
+        requests.post(self.hooks[channel], data=payload_json, headers=headers)
 
     def post_user_link(self, username, pretext, text, color, channel):
         payload = {
@@ -66,13 +70,14 @@ class WebHook(object):
                     "pretext": pretext,
                     "text": text,
                     "color": color,
-                    "mrkdwn_in": ["pretext", "text", "fields"]
+                    "mrkdwn_in": ["pretext", "text", "fields"],
+                    "footer": "Provided By "+self.bot_name
                 }
             ]
         }
-        payloadJSON = json.dumps(payload)
+        payload_json = json.dumps(payload)
         headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
-        requests.post(self.hooks[channel], data=payloadJSON, headers=headers)
+        requests.post(self.hooks[channel], data=payload_json, headers=headers)
 
     def post_submission_link(self, username, title, permalink, pretext, color, channel):
         payload = {
@@ -84,13 +89,14 @@ class WebHook(object):
                     "title_link": 'https://www.reddit.com' + permalink,
                     "pretext": pretext,
                     "color": color,
-                    "mrkdwn_in": ["pretext", "text", "fields"]
+                    "mrkdwn_in": ["pretext", "text", "fields"],
+                    "footer": "Provided By "+self.bot_name
                 }
             ]
         }
-        payloadJSON = json.dumps(payload)
+        payload_json = json.dumps(payload)
         headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
-        requests.post(self.hooks[channel], data=payloadJSON, headers=headers)
+        requests.post(self.hooks[channel], data=payload_json, headers=headers)
 
     def post_complex_link(self, username, title, permalink, pretext, text, fields, color, channel):
         payload = {
@@ -104,10 +110,11 @@ class WebHook(object):
                     "text": text,
                     "fields": fields,
                     "color": color,
-                    "mrkdwn_in": ["pretext", "text", "fields"]
+                    "mrkdwn_in": ["pretext", "text", "fields"],
+                    "footer": "Provided By "+self.bot_name
                 }
             ]
         }
-        payloadJSON = json.dumps(payload)
+        payload_json = json.dumps(payload)
         headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
-        requests.post(self.hooks[channel], data=payloadJSON, headers=headers)
+        requests.post(self.hooks[channel], data=payload_json, headers=headers)

@@ -1,10 +1,14 @@
-import re
+import praw
+import settings
+from pprint import pprint
 
-# testSubject = "User: 12Ed93 | Ban | Threshold: 1"
-testSubject = "blah blah blah"
-testExpr = r"User: (.*?) \| (.*?) \| Threshold: ([0-9].?)"
 
-searchObj = re.search(testExpr, testSubject)
-print(searchObj.group(1))
-print(searchObj.group(2))
-print(searchObj.group(3))
+reddit = praw.Reddit(client_id=settings.REDDIT_CLIENT_ID,
+                     client_secret=settings.REDDIT_CLIENT_SECRET,
+                     password=settings.REDDIT_PASSWORD,
+                     username=settings.REDDIT_USERNAME,
+                     user_agent=settings.REDDIT_USER_AGENT)
+subreddit = reddit.subreddit(settings.REDDIT_SUBREDDIT)
+
+for modlog in subreddit.mod.log(action='unbanuser',limit=5):
+    pprint(vars(modlog))
