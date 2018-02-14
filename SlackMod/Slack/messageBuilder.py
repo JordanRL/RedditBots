@@ -2,7 +2,7 @@ import attachmentBuilder
 import json
 
 
-class Message():
+class Message:
     def __init__(self):
         self.attachment = attachmentBuilder.Attachment(text="", fallback="")
         self.text = ""

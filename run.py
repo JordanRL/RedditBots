@@ -6,6 +6,8 @@ import praw
 import settings
 sys.path.append(os.path.abspath('./ImmediateAttention'))
 sys.path.append(os.path.abspath('./BrigadeMonitor'))
+sys.path.append(os.path.abspath('./Inspector'))
+sys.path.append(os.path.abspath('./Helpers'))
 import mentionMonitor
 import submissionMonitor
 import dailyquote
@@ -14,6 +16,9 @@ import risingPost
 import trollUnreported
 import violence
 import scoreTracking
+import inspectorKarma
+import inspectorKarmaBern
+import userNotes
 
 reddit = praw.Reddit(client_id=settings.REDDIT_CLIENT_ID,
                      client_secret=settings.REDDIT_CLIENT_SECRET,
@@ -31,6 +36,7 @@ else:
     option = 0
 status_message = settings.BOT_NAME+' Status Message'
 
+user_notes = userNotes.UserNotes(reddit, subreddit, HookBot, settings)
 
 def exit_gracefully(signum, frame):
     print('Unexpected error: ', sys.exc_info()[0])
@@ -85,6 +91,18 @@ try:
         text = settings.BOT_NAME+" is now monitoring r/"+settings.REDDIT_SUBREDDIT+" for posts quickly getting upvotes"
         HookBot.post_status(pretext, text, settings.SLACK_STATUS_CHANNEL)
         runClass = scoreTracking.ScoreTracking(reddit, subreddit, HookBot, settings)
+        runClass.main()
+    elif runCommand == "inspector":
+        pretext = status_message
+        text = settings.BOT_NAME+" is now running Inspector to watch for comments to report from problem subs"
+        HookBot.post_status(pretext, text, settings.SLACK_STATUS_CHANNEL)
+        runClass = inspectorKarma.InspectorKarma(reddit, subreddit, HookBot, settings)
+        runClass.main()
+    elif runCommand == "inspectorBern":
+        pretext = status_message
+        text = settings.BOT_NAME+" is now running Inspector to watch for comments to report from WotB"
+        HookBot.post_status(pretext, text, settings.SLACK_STATUS_CHANNEL)
+        runClass = inspectorKarmaBern.InspectorKarmaBern(reddit, subreddit, HookBot, settings, user_notes)
         runClass.main()
     else:
         print('Unknown Bot: '+runCommand)

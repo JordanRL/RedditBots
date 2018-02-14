@@ -2,6 +2,7 @@ import json
 import base64
 import zlib
 import time
+import pprint
 
 
 class UserNotes:
@@ -36,12 +37,23 @@ class UserNotes:
         usernote_page = self.subreddit.wiki['usernotes']
         usernote_content = usernote_page.content_md
         usernote_obj = json.loads(usernote_content)
-        unpacked_notes = json.loads(zlib.decompress(base64.b64decode(usernote_obj['blob'])))
+        unpacked_notes = json.loads(
+            zlib.decompress(
+                base64.b64decode(usernote_obj['blob'])
+            ).decode()
+        )
+        mods = usernote_obj['constants']['users']
+        if 'ActualBernieBot' in mods:
+            mod_pos = mods.index('ActualBernieBot')
+        else:
+            mods.append('ActualBernieBot')
+            mod_pos = mods.index('ActualBernieBot')
+            usernote_obj['constants']['users'] = mods
         if user in unpacked_notes:
-            unpacked_notes[user]['ns'].append({
+            unpacked_notes[user]['ns'].insert(0, {
                 'n': note,
-                't': time.time(),
-                'm': 4,
+                't': int(time.time()),
+                'm': mod_pos,
                 'l': '',
                 'w': self.reasons.index(note_type)
             })
@@ -49,13 +61,32 @@ class UserNotes:
             unpacked_notes[user] = {
                 'ns': [{
                     'n': note,
-                    't': time.time(),
-                    'm': 4,
+                    't': int(time.time()),
+                    'm': mod_pos,
                     'l': '',
                     'w': self.reasons.index(note_type)
                 }]
             }
-        packed_notes = base64.b64encode(zlib.compress(json.dumps(unpacked_notes)))
-        usernote_obj['blob'] = packed_notes
+        packed_notes = base64.b64encode(
+            zlib.compress(
+                json.dumps(unpacked_notes).encode()
+            )
+        )
+        usernote_obj['blob'] = packed_notes.decode()
         packed_page = json.dumps(usernote_obj)
         usernote_page.edit(packed_page)
+
+    def has_note(self, user, note):
+        usernote_page = self.subreddit.wiki['usernotes']
+        usernote_content = usernote_page.content_md
+        usernote_obj = json.loads(usernote_content)
+        unpacked_notes = json.loads(
+            zlib.decompress(
+                base64.b64decode(usernote_obj['blob'])
+            ).decode()
+        )
+        if user in unpacked_notes:
+            for noteObj in unpacked_notes[user]['ns']:
+                if noteObj['n'] == note:
+                    return True
+        return False
