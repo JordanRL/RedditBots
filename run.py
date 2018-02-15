@@ -4,6 +4,7 @@ import SlackWebHook
 import signal
 import praw
 import settings
+import pprint
 sys.path.append(os.path.abspath('./ImmediateAttention'))
 sys.path.append(os.path.abspath('./BrigadeMonitor'))
 sys.path.append(os.path.abspath('./Inspector'))
@@ -104,6 +105,10 @@ try:
         HookBot.post_status(pretext, text, settings.SLACK_STATUS_CHANNEL)
         runClass = inspectorKarmaBern.InspectorKarmaBern(reddit, subreddit, HookBot, settings, user_notes)
         runClass.main()
+    elif runCommand == "testLog":
+        logs = subreddit.mod.log(limit=5)
+        for log in logs:
+            pprint.pprint(vars(log))
     else:
         print('Unknown Bot: '+runCommand)
 except KeyboardInterrupt:
