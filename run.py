@@ -9,6 +9,7 @@ sys.path.append(os.path.abspath('./ImmediateAttention'))
 sys.path.append(os.path.abspath('./BrigadeMonitor'))
 sys.path.append(os.path.abspath('./Inspector'))
 sys.path.append(os.path.abspath('./Helpers'))
+sys.path.append(os.path.abspath('./Reports'))
 import mentionMonitor
 import submissionMonitor
 import dailyquote
@@ -20,6 +21,7 @@ import scoreTracking
 import inspectorKarma
 import inspectorKarmaBern
 import userNotes
+import modlogReport
 
 reddit = praw.Reddit(client_id=settings.REDDIT_CLIENT_ID,
                      client_secret=settings.REDDIT_CLIENT_SECRET,
@@ -105,10 +107,16 @@ try:
         HookBot.post_status(pretext, text, settings.SLACK_STATUS_CHANNEL)
         runClass = inspectorKarmaBern.InspectorKarmaBern(reddit, subreddit, HookBot, settings, user_notes)
         runClass.main()
+    elif runCommand == "monitorBans":
+        pretext = status_message
+        text = settings.BOT_NAME + " is now monitoring the mod log for bans"
+        HookBot.post_status(pretext, text, settings.SLACK_STATUS_CHANNEL)
+        runClass = modlogReport.ModlogReport(reddit, subreddit, HookBot, settings, user_notes)
+        runClass.post_bans()
     elif runCommand == "testLog":
-        logs = subreddit.mod.log(limit=5)
+        logs = subreddit.mod.log(action='banuser', limit=5)
         for log in logs:
-            pprint.pprint(vars(log))
+            pprint.pprint(log.mod)
     else:
         print('Unknown Bot: '+runCommand)
 except KeyboardInterrupt:

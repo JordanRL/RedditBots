@@ -79,6 +79,25 @@ class WebHook(object):
         headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
         requests.post(self.hooks[channel], data=payload_json, headers=headers)
 
+    def post_user_link_with_fields(self, username, pretext, text, color, channel, fields):
+        payload = {
+            "attachments": [
+                {
+                    "author_name": username,
+                    "author_link": "https://www.reddit.com/user/" + username,
+                    "pretext": pretext,
+                    "text": text,
+                    "fields": fields,
+                    "color": color,
+                    "mrkdwn_in": ["pretext", "text", "fields"],
+                    "footer": "Provided By "+self.bot_name
+                }
+            ]
+        }
+        payload_json = json.dumps(payload)
+        headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
+        requests.post(self.hooks[channel], data=payload_json, headers=headers)
+
     def post_submission_link(self, username, title, permalink, pretext, color, channel):
         payload = {
             "attachments": [
