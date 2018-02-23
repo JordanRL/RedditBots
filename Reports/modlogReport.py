@@ -45,6 +45,11 @@ class ModlogReport:
                         note_text = 'ABB: Permabanned by '+ban.mod.name+' on '+str(ban_datetime.month)+'-'+str(ban_datetime.day)+'-'+str(ban_datetime.year)
                         note_type = 'permanently_banned'
                         duration = 'Permanent'
+                    elif ban.details == 'changed to permanent':
+                        pre_text = 'This ban has been changed from temporary to permanent by '+ban.mod.name+' :timer_clock: :arrow_right: :banhammer:'
+                        note_text = 'ABB: Extended to permaban by '+ban.mod.name+' on '+str(ban_datetime.month)+'-'+str(ban_datetime.day)+'-'+str(ban_datetime.year)
+                        note_type = 'permanently_banned'
+                        duration = 'Extended to Permanent'
                     else:
                         note_text = 'ABB: Tempbanned by '+ban.mod.name+' on '+str(ban_datetime.month)+'-'+str(ban_datetime.day)+'-'+str(ban_datetime.year)
                         note_type = 'banned'
