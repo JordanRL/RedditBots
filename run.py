@@ -211,14 +211,14 @@ try:
     else:
         print('Unknown Bot: '+runCommand)
 except KeyboardInterrupt:
-    print('Stopping bot')
+    print('\nStopping bot')
     if runCommand != "inspectorBern":
         HookBot.post_warning(pretext=status_message,
                              text='The bot "'+runCommand+'" is being shut down',
                              channel=settings.SLACK_STATUS_CHANNEL)
     sys.exit(1)
 except:
-    print('Unexpected error: ', sys.exc_info()[0])
+    print('\nUnexpected error: ', sys.exc_info()[0])
     if runCommand != "inspectorBern":
         HookBot.post_danger(pretext=status_message,
                             text='The bot "'+runCommand+'" has experienced an error',
