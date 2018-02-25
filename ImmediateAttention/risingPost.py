@@ -14,10 +14,12 @@ class RisingPost:
         :param settings:
         :type settings: settings
         """
+        self.stickyPost = open("PostTemplates/risingPostSticky.txt").read()
         self.reddit = reddit
         self.subreddit = subreddit
         self.webHook = slack_hook
         self.settings = settings
+        self.stickyPost = self.stickyPost.replace('{{rules_date}}', 'November 8th, 2017')
 
     def main(self):
         flair_meta_id = self.settings.SUBREDDIT_META_FLAIR_ID
@@ -42,7 +44,8 @@ class RisingPost:
                             "highest-position": 1000,
                             "last-process-time": time.time(),
                             "last-score": 0,
-                            "last-position": 0
+                            "last-position": 0,
+                            "sticky-post-made": 0
                         }
                     if position < 25 and not recorded_posts[item.name]["top25"]:
                         print('Top 25 post')
@@ -65,6 +68,12 @@ class RisingPost:
                         color = "good"
                         channel = self.settings.SLACK_SUBREDDIT_CHANNEL
                         recorded_posts[item.name]["top200"] = 1
+                    if recorded_posts[item.name]["sticky-post-made"]:
+                        sticky_comment = item.reply(self.stickyPost)
+                        sticky_comment.mod.approve()
+                        sticky_comment.mod.distinguish(how='yes',sticky=True)
+                        sticky_comment.mod.ignore_reports()
+                        recorded_posts[item.name]["sticky-post-made"] = 1
                     if pretext is not None and color is not None and channel is not None:
                         self.webHook.post_submission_link(username=item.author.name, title=item.title,
                                                           permalink=item.permalink, pretext=pretext,
