@@ -21,7 +21,7 @@ try:
             if killCommand in processes:
                 if s.Popen.poll(processes[killCommand]) is None:
                     s.Popen.terminate(processes[killCommand])
-                    del(processes[killCommand])
+                    del processes[killCommand]
             elif killCommand == "all":
                 for bot in processes:
                     s.Popen.terminate(bot)

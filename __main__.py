@@ -2,6 +2,8 @@ import os
 import json
 import boto3
 import pprint
+import subprocess as s
+import sys
 from flask import Flask, request, make_response
 
 
@@ -74,5 +76,18 @@ def event_handler():
 
 
 # Start the server on port 3000
-if __name__ == "__main__":
-    app.run(port=3000)
+rtm_bot = None
+try:
+    if __name__ == "__main__":
+        rtm_bot = s.Popen(['python3', 'slack_bot.py'])
+        app.run(port=3000)
+except KeyboardInterrupt:
+    print('\nStopping bot')
+    if rtm_bot is not None:
+        s.Popen.terminate(rtm_bot)
+    sys.exit(1)
+except:
+    print('\nUnexpected error: ', sys.exc_info()[0])
+    if rtm_bot is not None:
+        s.Popen.terminate(rtm_bot)
+    raise

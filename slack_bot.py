@@ -4,6 +4,8 @@ import re
 import praw
 import settings
 import pprint
+from attachmentBuilder import Attachment
+from slack_messenger import SlackMessenger
 from datetime import datetime
 from slackclient import SlackClient
 
@@ -70,26 +72,41 @@ def handle_command(command, channel):
     elif command.startswith('!time'):
         response = datetime.now().timetz().isoformat()
     elif command.startswith('!queueSize'):
+        print('Calculating Queue Size')
         item_count = 0
         for item in subreddit.mod.modqueue(limit=None):
             item_count += 1
+        messenger = SlackMessenger()
         response = "The modqueue currently has *"+str(item_count)+"* items in it."
+        result = messenger.set_text(response).set_channel(channel).send_message()
+        if result:
+            print('Queue Size Sent')
+        else:
+            print('Problem Sending Queue Size')
+        response_sent = True
     elif command.startswith('!testComplex'):
-        slack_client.api_call(
-            "chat.postMessage",
-            channel=channel,
-            attachments=[
-                {
-                    "author_name": "JordanLeDoux",
-                    "author_link": "https://www.reddit.com/user/JordanLeDoux",
-                    "pretext": "A test message now",
-                    "text": "This should test more complex message",
-                    "color": "good",
-                    "mrkdwn_in": ["pretext", "text", "fields"],
-                    "footer": "Provided By ActualBernieBot"
-                }
-            ]
+        print('Building Complex')
+        messenger = SlackMessenger(slack_client)
+        attachment = Attachment("This should test a more complex message", "This should test a more complex message")
+        attachment.set_author(
+            author_name="JordanLeDoux",
+            author_link="https://www.reddit.com/user/JordanLeDoux"
         )
+        attachment.set_content(
+            text="This should test a more complex message",
+            pretext="A test message now"
+        )
+        attachment.set_color(
+            color="good"
+        )
+        attachment.set_footer(
+            footer="Provided By ActualBernieBot"
+        )
+        result = messenger.post_attachment(attachment, channel)
+        if result:
+            print('Complex Sent')
+        else:
+            print('Problem Sending Complex')
         response_sent = True
     elif command.startswith('!postQuote'):
         if "random" not in joined_channels:
@@ -209,6 +226,7 @@ if __name__ == "__main__":
         while True:
             command, channel = parse_bot_commands(slack_client.rtm_read())
             if command:
+                print('Command Received: '+command+' in '+channel)
                 handle_command(command, channel)
             time.sleep(RTM_READ_DELAY)
     else:
