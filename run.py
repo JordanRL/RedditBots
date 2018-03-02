@@ -5,6 +5,7 @@ import signal
 import praw
 import settings
 import pprint
+import datetime
 sys.path.append(os.path.abspath('./ImmediateAttention'))
 sys.path.append(os.path.abspath('./BrigadeMonitor'))
 sys.path.append(os.path.abspath('./Inspector'))
@@ -20,6 +21,7 @@ import violence
 import scoreTracking
 import inspectorKarma
 import inspectorKarmaBern
+import inspectorShadowban
 import inspectorTest
 import userNotes
 import modlogReport
@@ -208,6 +210,44 @@ try:
                 }
             ]
         )
+    elif runCommand == "testTraffic":
+        traffic = subreddit.traffic()
+        week_num = 0
+        week_vals = {}
+        for day in traffic["day"]:
+            timestamp = day[0]
+            uniques = day[1]
+            views = day[2]
+            subscriptions = day[3]
+
+            dt_obj = datetime.datetime.utcfromtimestamp(timestamp)
+            print(dt_obj.strftime('%b %d, %I:%M %p %Z'))
+            if dt_obj.weekday() == 6:
+                week_num += 1
+            if week_num not in week_vals:
+                week_vals[week_num] = {
+                    "uniques": 0,
+                    "views": 0,
+                    "subscriptions": 0
+                }
+            week_vals[week_num]["uniques"] += uniques
+            week_vals[week_num]["views"] += views
+            week_vals[week_num]["subscriptions"] += subscriptions
+        pprint.pprint(week_vals)
+        modlog_count = 0
+        modlog_last_log = None
+        for log in subreddit.mod.log(limit=200):
+            modlog_count += 1
+            modlog_last_log = log
+        print('Number of logs processed: '+str(modlog_count))
+        log_dt = datetime.datetime.utcfromtimestamp(modlog_last_log.created_utc)
+        print('Last log processed: '+log_dt.strftime('%b %d'))
+    elif runCommand == "inspectorShadowban":
+        pretext = status_message
+        text = settings.BOT_NAME + " is now monitoring the sub for shadowbanned users"
+        HookBot.post_status(pretext, text, settings.SLACK_STATUS_CHANNEL)
+        runClass = inspectorShadowban.InspectorShadowban(reddit, subreddit, HookBot, settings)
+        runClass.main()
     else:
         print('Unknown Bot: '+runCommand)
 except KeyboardInterrupt:

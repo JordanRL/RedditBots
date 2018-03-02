@@ -1,6 +1,6 @@
 
 
-class InspectorKarma:
+class InspectorShadowban:
     def __init__(self, reddit, subreddit, slack_hook, settings):
         """
 
@@ -18,7 +18,7 @@ class InspectorKarma:
         self.webHook = slack_hook
         self.settings = settings
         self.banlist = [
-
+            'FThumb'
         ]
 
     def main(self):

@@ -128,7 +128,7 @@ class InspectorKarma:
                 if self.karmaTotal[note_sub] > self.karmaNoteLimit and not self.notes.has_note(author, note_text):
                     self.notes.add_note(author, note_text, 'mod_note')
                     print('Added Usernote (' + self.karmaAbbr[note_sub] + '): ' + author)
-            for abuse_sub in self.subNote:
+            for abuse_sub in self.subAbuse:
                 note_text = 'ABB: '+self.karmaAbbr[abuse_sub]+' Flagged'
                 if self.karmaTotal[abuse_sub] > self.karmaNoteLimit and not self.notes.has_note(author, note_text):
                     self.notes.add_note(author, note_text, 'abuse_watch')

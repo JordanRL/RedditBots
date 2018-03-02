@@ -53,7 +53,14 @@ class SlackSQS:
             return False
 
     def pack_event(self, event):
+        self.sqs.send_message(
+            QueueUrl="https://sqs.us-east-1.amazonaws.com/068534578493/slackbotevent.fifo",
+            MessageBody=json.dumps(event),
+            MessageGroupId="slack-event",
+            MessageDeduplicationId=event['event_id']
+        )
         return True
 
     def unpack_event(self, event):
+        event = self.sqs.receive_message
         return True
