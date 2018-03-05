@@ -47,6 +47,9 @@ for day in traffic['day']:
                 'removals': 0,
                 'bans': 0,
                 'unbans': 0,
+                'approvals': 0,
+                'flair': 0,
+                'sticky': 0,
                 'other': 0
             }
         }
@@ -64,6 +67,9 @@ for day in traffic['day']:
             'removals': 0,
             'bans': 0,
             'unbans': 0,
+            'approvals': 0,
+            'flair': 0,
+            'sticky': 0,
             'other': 0
         }
     }
@@ -93,6 +99,15 @@ for log_entry in subreddit.mod.log(limit=5000):
         elif log_entry.action == 'removecomment':
             weekly_data[1]['days'][log_dt.weekday()]['actions']['removals'] += 1
             weekly_data[1]['actions']['removals'] += 1
+        elif log_entry.action == 'approvelink' or log_entry.action == 'approvecomment':
+            weekly_data[1]['days'][log_dt.weekday()]['actions']['approvals'] += 1
+            weekly_data[1]['actions']['approvals'] += 1
+        elif log_entry.action == 'editflair':
+            weekly_data[1]['days'][log_dt.weekday()]['actions']['flair'] += 1
+            weekly_data[1]['actions']['flair'] += 1
+        elif log_entry.action == 'sticky' or log_entry.action == 'unsticky':
+            weekly_data[1]['days'][log_dt.weekday()]['actions']['sticky'] += 1
+            weekly_data[1]['actions']['sticky'] += 1
         else:
             weekly_data[1]['days'][log_dt.weekday()]['actions']['other'] += 1
             weekly_data[1]['actions']['other'] += 1
@@ -103,8 +118,8 @@ for log_entry in subreddit.mod.log(limit=5000):
 
 print(str(count)+' Log Entries Processed')
 
-actions_table = '|  Day  |  Bans  |  Unbans  |  Removals  |  Other  |  **Total**  |\n'
-actions_table = actions_table + '|---|---|---|---|---|---|\n'
+actions_table = '|  Day  |  Bans  |  Unbans  |  Removals  |  Approvals  |  Flair  |  Sticky  |  Other  |  **Total**  |\n'
+actions_table = actions_table + '|---|---|---|---|---|---|---|---|---|\n'
 traffic_table = '|  Day  | Uniques  |  Views  |  Subs  |\n'
 traffic_table = traffic_table + '|---|---|---|---|\n'
 total_uniques = 0
@@ -136,6 +151,9 @@ for day, info in weekly_data[1]['days'].items():
     actions_table = actions_table + str(info['actions']['bans']) + '  |  '
     actions_table = actions_table + str(info['actions']['unbans']) + '  |  '
     actions_table = actions_table + str(info['actions']['removals']) + '  |  '
+    actions_table = actions_table + str(info['actions']['approvals']) + '  |  '
+    actions_table = actions_table + str(info['actions']['flair']) + '  |  '
+    actions_table = actions_table + str(info['actions']['sticky']) + '  |  '
     actions_table = actions_table + str(info['actions']['other']) + '  |  '
     actions_table = actions_table + str(info['actions']['total']) + '  |\n'
 
@@ -144,7 +162,7 @@ for day, info in weekly_data[1]['days'].items():
     traffic_table = traffic_table + str(info['subs']) + '  |\n'
 
     if day == 6:
-        actions_table = actions_table + '|  **Totals**  |  '+str(weekly_data[1]['actions']['bans'])+'  |  '+str(weekly_data[1]['actions']['unbans'])+'  |  '+str(weekly_data[1]['actions']['removals'])+'  |  '+str(weekly_data[1]['actions']['other'])+'  |  '+str(weekly_data[1]['actions']['total'])+'  |\n'
+        actions_table = actions_table + '|  **Totals**  |  '+str(weekly_data[1]['actions']['bans'])+'  |  '+str(weekly_data[1]['actions']['unbans'])+'  |  '+str(weekly_data[1]['actions']['removals'])+'  |  '+str(weekly_data[1]['actions']['approvals'])+'  |  '+str(weekly_data[1]['actions']['flair'])+'  |  '+str(weekly_data[1]['actions']['sticky'])+'  |  '+str(weekly_data[1]['actions']['other'])+'  |  '+str(weekly_data[1]['actions']['total'])+'  |\n'
         traffic_table = traffic_table + '|  **Totals**  |  '+str(weekly_data[1]['uniques'])+'  |  '+str(weekly_data[1]['views'])+'  |  '+str(weekly_data[1]['subs'])+'  |\n'
 
 date_range = weekly_data[1]['days'][0]['date'].strftime('%b %d')+' - '+weekly_data[1]['days'][6]['date'].strftime('%b %d')
@@ -154,14 +172,10 @@ log_report = log_report.replace('{{mod_activity}}', actions_table)
 log_report = log_report.replace('{{traffic_report}}', traffic_table)
 log_report = log_report.replace('{{date_range}}', date_range)
 
-report_submission = subreddit.submit(
-    title='Weekly Mod Transparency Report: '+date_range,
-    selftext=log_report,
-    flair_id=settings.SUBREDDIT_META_FLAIR_ID,
-    flair_text='Transparency',
-    send_replies=False
-)
+report_submission = subreddit.submit(title='Weekly Mod Transparency Report: '+date_range, selftext=log_report)
 
+report_submission.disable_inbox_replies()
+report_submission.flair.select(settings.SUBREDDIT_META_FLAIR_ID, 'Transparency')
 report_submission.mod.approve()
 report_submission.mod.distinguish()
 report_submission.mod.sticky(state=True, bottom=True)

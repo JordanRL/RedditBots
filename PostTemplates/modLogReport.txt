@@ -1,13 +1,13 @@
 ### Weekly Mod Transparency Report
 #### {{date_range}}
 
-This weekly mod transparency report has been automatically generated from inspecting the moderation log. This log is
-generated and maintained by the reddit software and cannot be directly controlled or censored by any moderator, including
-the top mod of the subreddit.
+This weekly mod transparency report has been automatically generated from inspecting the moderation log. This log is generated and maintained by the reddit software and cannot be directly controlled or censored by any moderator, including the top mod of the subreddit.
 
 ### Moderator Actions Taken
 
 {{mod_activity}}
+
+NOTE: "Other" includes marking items as spam; adding, removing, or changing moderators on the mod team; adding or removing an approved contributor; editing the subreddit settings; editing the subreddit wiki; distiguishing a moderator comment; marking an item as ignoring reports; locking and unlocking posts; muting and unmuting users in modmail; and changing the CSS for the subreddit.
 
 ### Subreddit Traffic Report
 
