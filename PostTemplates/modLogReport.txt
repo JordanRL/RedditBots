@@ -1,14 +1,15 @@
 ### Weekly Mod Transparency Report
+#### {{date_range}}
 
 This weekly mod transparency report has been automatically generated from inspecting the moderation log. This log is
 generated and maintained by the reddit software and cannot be directly controlled or censored by any moderator, including
 the top mod of the subreddit.
 
-### Mods Who Have Taken Actions
+### Moderator Actions Taken
 
 {{mod_activity}}
 
-### Types of Actions Taken
+### Subreddit Traffic Report
 
-{{activity_types}}
+{{traffic_report}}
 

@@ -3,7 +3,6 @@ import time
 import re
 import praw
 import settings
-import pprint
 from attachmentBuilder import Attachment
 from slack_messenger import SlackMessenger
 from datetime import datetime
@@ -32,10 +31,10 @@ active_votes = {}
 
 def parse_bot_commands(slack_events):
     """
-            Parses a list of events coming from the Slack RTM API to find bot commands.
-            If a bot command is found, this function returns a tuple of command and channel.
-            If its not found, then this function returns None, None.
-        """
+        Parses a list of events coming from the Slack RTM API to find bot commands.
+        If a bot command is found, this function returns a tuple of command and channel.
+        If its not found, then this function returns None, None.
+    """
     for event in slack_events:
         if event["type"] == "message" and not "subtype" in event:
             if event["channel"].startswith('D'):

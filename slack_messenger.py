@@ -1,5 +1,4 @@
 import os
-import pprint
 from slackclient import SlackClient
 from attachmentBuilder import Attachment
 
