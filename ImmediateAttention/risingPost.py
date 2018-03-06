@@ -68,7 +68,7 @@ class RisingPost:
                         color = "good"
                         channel = self.settings.SLACK_SUBREDDIT_CHANNEL
                         recorded_posts[item.name]["top200"] = 1
-                    if recorded_posts[item.name]["sticky-post-made"]:
+                    if not recorded_posts[item.name]["sticky-post-made"]:
                         sticky_comment = item.reply(self.stickyPost)
                         sticky_comment.mod.approve()
                         sticky_comment.mod.distinguish(how='yes',sticky=True)

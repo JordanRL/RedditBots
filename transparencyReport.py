@@ -1,8 +1,8 @@
+# This script is copyright 2018 Jordan LeDoux and may not be used or distributed without permission
+
 import praw
 import settings
-import os
 import calendar
-import pprint
 from datetime import datetime
 
 
@@ -74,12 +74,9 @@ for day in traffic['day']:
         }
     }
 
-done = False
-last = None
 end_utc_ts = calendar.timegm(weekly_data[1]['days'][0]['date'].timetuple())
 start_utc_ts = calendar.timegm(weekly_data[0]['days'][0]['date'].timetuple())
 count = 0
-last_date = ''
 
 for log_entry in subreddit.mod.log(limit=5000):
     count += 1
