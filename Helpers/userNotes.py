@@ -22,16 +22,7 @@ class UserNotes:
         self.subreddit = subreddit
         self.webHook = slack_hook
         self.settings = settings
-        self.reasons = [
-            "mod_note",
-            "good_contributor",
-            "abuse_watch",
-            "permanently_banned",
-            "recently_unbanned",
-            "banned",
-            "official_warning",
-            "spam_watch",
-        ]
+        self.reasons = []
 
     def add_note(self, user, note, note_type):
         usernote_page = self.subreddit.wiki['usernotes']
@@ -43,6 +34,7 @@ class UserNotes:
             ).decode()
         )
         mods = usernote_obj['constants']['users']
+        reasons = usernote_obj['constants']['warnings']
         if 'ActualBernieBot' in mods:
             mod_pos = mods.index('ActualBernieBot')
         else:
@@ -55,7 +47,7 @@ class UserNotes:
                 't': int(time.time()),
                 'm': mod_pos,
                 'l': '',
-                'w': self.reasons.index(note_type)
+                'w': reasons.index(note_type)
             })
         else:
             unpacked_notes[user] = {
@@ -64,7 +56,7 @@ class UserNotes:
                     't': int(time.time()),
                     'm': mod_pos,
                     'l': '',
-                    'w': self.reasons.index(note_type)
+                    'w': reasons.index(note_type)
                 }]
             }
         packed_notes = base64.b64encode(

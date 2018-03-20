@@ -1,4 +1,6 @@
 import time
+import prawcore
+import pprint
 
 
 class InspectorKarma:
@@ -63,45 +65,54 @@ class InspectorKarma:
         for sub_name in self.karmaWatch:
             self.karmaMods[sub_name] = self.reddit.subreddit(sub_name).moderator()
 
-        for comment in subreddit.stream.comments():
-            for sub_name, modlist in self.karmaMods.items():
-                if comment.author.name in modlist and not self.notes.has_note(comment.author.name, 'ABB: '+self.karmaAbbr[sub_name]+' Mod'):
-                    self.notes.add_note(comment.author.name, 'ABB: '+self.karmaAbbr[sub_name]+' Mod', 'mod_note')
-            if self.notes.has_note(comment.author.name, 'Good Contributor') and comment.author.name not in self.whitelist:
-                self.whitelist.append(comment.author.name)
-            else:
-                self.karmaTotal = {
-                    'the_donald': 0,
-                    'enough_sanders_spam': 0,
-                    'wayofthebern': 0,
-                    'theredpill': 0
-                }
-                if comment.author.name not in self.whitelist:
-                    report = 0
-                    if comment.author.name in self.identifiedUsers:
-                        old_time = self.identifiedUsersTime[comment.author.name]
-                        diff_time = time.time() - old_time
-                        if int(diff_time) < 86400:
-                            report = 1
-                        else:
-                            self.identifiedUsers.remove(comment.author.name)
-                    if report == 0:
-                        karma_aggregate = 0
-                        for authorComment in comment.author.comments.new(limit=None):
-                            sub_name = authorComment.subreddit.display_name.lower()
-                            if sub_name in self.karmaWatch:
-                                self.karmaTotal[sub_name] += authorComment.score
-                                karma_aggregate += authorComment.score
-                        if karma_aggregate > self.karmaLimit:
-                            report = 1
-                            self.identifiedUsers.append(comment.author.name)
-                            self.identifiedUsersKarma[comment.author.name] = self.make_karma_report()
-                            self.identifiedUsersTime[comment.author.name] = time.time()
-                    if report == 1:
-                        karma_report = self.identifiedUsersKarma[comment.author.name]
-                        comment.report('Inspector: Bad Karma ['+karma_report+']')
-                        print('Report Made: '+comment.author.name+' ['+karma_report+']')
-                    self.make_user_note(author=comment.author.name)
+        while True:
+            try:
+                for comment in subreddit.stream.comments():
+                    for sub_name, modlist in self.karmaMods.items():
+                        if comment.author.name in modlist and not self.notes.has_note(comment.author.name, 'ABB: '+self.karmaAbbr[sub_name]+' Mod'):
+                            self.notes.add_note(comment.author.name, 'ABB: '+self.karmaAbbr[sub_name]+' Mod', 'mod_note')
+                    if self.notes.has_note(comment.author.name, 'Good Contributor') and comment.author.name not in self.whitelist:
+                        self.whitelist.append(comment.author.name)
+                    else:
+                        self.karmaTotal = {
+                            'the_donald': 0,
+                            'enough_sanders_spam': 0,
+                            'wayofthebern': 0,
+                            'theredpill': 0
+                        }
+                        if comment.author.name not in self.whitelist:
+                            report = 0
+                            if comment.author.name in self.identifiedUsers:
+                                old_time = self.identifiedUsersTime[comment.author.name]
+                                diff_time = time.time() - old_time
+                                if int(diff_time) < 86400:
+                                    report = 1
+                                else:
+                                    self.identifiedUsers.remove(comment.author.name)
+                            if report == 0:
+                                karma_aggregate = 0
+                                for authorComment in comment.author.comments.new(limit=None):
+                                    sub_name = authorComment.subreddit.display_name.lower()
+                                    if sub_name in self.karmaWatch:
+                                        self.karmaTotal[sub_name] += authorComment.score
+                                        karma_aggregate += authorComment.score
+                                if karma_aggregate > self.karmaLimit:
+                                    report = 1
+                                    self.identifiedUsers.append(comment.author.name)
+                                    self.identifiedUsersKarma[comment.author.name] = self.make_karma_report()
+                                    self.identifiedUsersTime[comment.author.name] = time.time()
+                            if report == 1:
+                                karma_report = self.identifiedUsersKarma[comment.author.name]
+                                comment.report('Inspector: Bad Karma ['+karma_report+']')
+                                print('Report Made: '+comment.author.name+' ['+karma_report+']')
+                            self.make_user_note(author=comment.author.name)
+            except prawcore.exceptions.NotFound:
+                print('Not found exception, waiting 30 seconds then restarting.')
+                time.sleep(30)
+                continue
+            except prawcore.exceptions.ResponseException:
+                pprint.pprint(vars(prawcore.exceptions.ResponseException))
+                raise prawcore.exceptions.ResponseException
 
     def make_karma_report(self):
         report_string = ''

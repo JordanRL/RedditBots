@@ -13,3 +13,7 @@ NOTE: "Other" includes marking items as spam; adding, removing, or changing mode
 
 {{traffic_report}}
 
+### Subreddit Activity Report
+
+{{activity_report}}
+
