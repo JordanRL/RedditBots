@@ -279,7 +279,7 @@ if runCommand is not None and runCommand == 'dryrun':
     print(log_report)
     HookBot.post_status(
         'ActualBernieBot Status Message',
-        'ActualBernieBot compiled the transparency report in *dryrun* mode, so it was note posted to the subreddit',
+        'ActualBernieBot compiled the transparency report in *dryrun* mode, so it was not posted to the subreddit',
         settings.SLACK_STATUS_CHANNEL
     )
 else:
