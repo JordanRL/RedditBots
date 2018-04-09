@@ -138,6 +138,23 @@ class WebHook(object):
         headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
         requests.post(self.hooks[channel], data=payload_json, headers=headers)
 
+    def post_complex_message(self, pretext, text, fields, color, channel):
+        payload = {
+            "attachments": [
+                {
+                    "pretext": pretext,
+                    "text": text,
+                    "fields": fields,
+                    "color": color,
+                    "mrkdwn_in": ["pretext", "text", "fields"],
+                    "footer": "Provided By "+self.bot_name
+                }
+            ]
+        }
+        payload_json = json.dumps(payload)
+        headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
+        requests.post(self.hooks[channel], data=payload_json, headers=headers)
+
     def post_complex_message_with_actions(self, username, pretext, text, fields, color, channel, actions):
         payload = {
             "attachments": [
