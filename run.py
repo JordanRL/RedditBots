@@ -3,6 +3,7 @@ import os
 import SlackWebHook
 import signal
 import praw
+import prawcore
 import settings
 import pprint
 import datetime
@@ -23,6 +24,8 @@ import inspectorKarma
 import inspectorKarmaBern
 import inspectorShadowban
 import inspectorTest
+import inspectorUser
+import unbanReport
 import userNotes
 import modlogReport
 
@@ -247,6 +250,19 @@ try:
         text = settings.BOT_NAME + " is now monitoring the sub for shadowbanned users"
         HookBot.post_status(pretext, text, settings.SLACK_STATUS_CHANNEL)
         runClass = inspectorShadowban.InspectorShadowban(reddit, subreddit, HookBot, settings)
+        runClass.main()
+    elif runCommand == "inspectorUser":
+        pretext = status_message
+        text = settings.BOT_NAME + " is now doing a karma report on user "+option
+        HookBot.post_status(pretext, text, settings.SLACK_STATUS_CHANNEL)
+        user_object = reddit.redditor(option)
+        runClass = inspectorUser.InspectorUser(reddit, user_object, HookBot, settings)
+        runClass.main()
+    elif runCommand == "unbanReport":
+        pretext = status_message
+        text = settings.BOT_NAME + " is now doing an unban report"
+        HookBot.post_status(pretext, text, settings.SLACK_STATUS_CHANNEL)
+        runClass = unbanReport.UnbanReport(reddit, subreddit, HookBot, settings)
         runClass.main()
     else:
         print('Unknown Bot: '+runCommand)

@@ -27,6 +27,7 @@ class MentionMonitor:
             if self.subreddit.display_name.lower() in the_text:
                 print('Found Match')
                 message = 'Possible Brigading From /r/'+comment.subreddit.display_name
-                self.webHook.post_submission_link(username=comment.author.name, title='Permalink',
-                                                  permalink=comment.permalink+'?context=5', pretext=message,
-                                                  color='warning', channel=self.settings.SLACK_ALERT_CHANNEL)
+                print(message+': '+comment.permalink)
+                #self.webHook.post_submission_link(username=comment.author.name, title='Permalink',
+                #                                  permalink=comment.permalink+'?context=5', pretext=message,
+                #                                  color='warning', channel=self.settings.SLACK_ALERT_CHANNEL)

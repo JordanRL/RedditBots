@@ -48,7 +48,7 @@ class HighReports:
                                                           color='danger', channel=self.settings.SLACK_SUBREDDIT_CHANNEL)
                         recorded_reports[item.name]["sent_danger"] = 1
                     if item.num_reports > threshold_notice and not recorded_reports[item.name]['sent_notice']:
-                        pretext = "This item has received more than "+str(threshold_notice)+" reports without being approved or ignored."
+                        pretext = "A new item has been reported in the modqueue"
                         print('Sending Notice Report')
                         self.webHook.post_submission_link(username=item.author.name, title='Permalink',
                                                           permalink=item.permalink+'?context=5', pretext=pretext,

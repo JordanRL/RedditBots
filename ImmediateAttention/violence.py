@@ -43,7 +43,7 @@ class Violence:
                 alert = 1
             if alert:
                 print('Found match')
-                pretext = "Possible violation of reddit violence policy found"
+                pretext = "Possible violation of reddit violence/harassment policy found"
                 self.webHook.post_submission_link(username=comment.author.name, title="Permalink",
                                                   permalink=comment.permalink, pretext=pretext,
                                                   color="danger", channel=self.settings.SLACK_DANGER_CHANNEL)

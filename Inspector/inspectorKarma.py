@@ -58,12 +58,12 @@ class InspectorKarma:
         self.notes = user_notes
 
     def main(self):
-        subreddit = self.reddit.subreddit('sandersforpresident')
+        subreddit = self.subreddit
         print('Starting Script')
         self.whitelist = self.whitelist + self.settings.SUBREDDIT_MODLIST
 
         for sub_name in self.karmaWatch:
-            self.karmaMods[sub_name] = self.reddit.subreddit(sub_name).moderator()
+            self.karmaMods[sub_name] = subreddit.moderator()
 
         while True:
             try:
@@ -110,9 +110,26 @@ class InspectorKarma:
                 print('Not found exception, waiting 30 seconds then restarting.')
                 time.sleep(30)
                 continue
-            except prawcore.exceptions.ResponseException:
-                pprint.pprint(vars(prawcore.exceptions.ResponseException))
-                raise prawcore.exceptions.ResponseException
+            except prawcore.exceptions.InvalidToken as e:
+                pprint.pprint(vars(e))
+                print("Invalid token, waiting 30 seconds then restarting.")
+                time.sleep(30)
+                continue
+            except prawcore.exceptions.ServerError as e:
+                pprint.pprint(vars(e.response))
+                pprint.pprint(vars(e))
+                print("API server error, waiting 30 seconds then restarting.")
+                time.sleep(30)
+                continue
+            except prawcore.exceptions.ResponseException as e:
+                pprint.pprint(vars(e.response))
+                pprint.pprint(vars(e))
+                print("Service error, waiting 30 seconds then restarting.")
+                time.sleep(30)
+                continue
+            except Exception as e:
+                pprint.pprint(vars(e))
+                raise e
 
     def make_karma_report(self):
         report_string = ''
